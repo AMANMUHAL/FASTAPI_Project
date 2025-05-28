@@ -103,7 +103,7 @@ def sort_patient(sort_by: str = Query(..., description="Sort on the basis of hei
 
 @app.post('/create')
 def create_profile(patient:Patient):
-    #load existing data
+    #load existing data in dict format
     data = load_data()
 
     #check if new data already exists
@@ -151,6 +151,19 @@ def update_patient(patient_id:str, patient_update:PatientUpdate):
 
     return JSONResponse(status_code=200,content={'message':'Patient Updated'})
 
+
+@app.delete('/delete/{patient_id}')
+def delete_patient(patient_id:str):
+    data = load_data()
+
+    if patient_id not in data:
+        raise HTTPException(status_code=404,detail="Patient not found")
+    
+    del data[patient_id]
+
+    save_data(data)
+
+    return JSONResponse(status_code=202, content={'message':"Deleted successfully"})
 
 
 
